@@ -15,11 +15,45 @@ export const siteConfig = {
   ],
 } as const;
 
-export function getSiteUrl() {
-  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
+function normalizeSiteUrl(value: string) {
+  const trimmed = value.trim().replace(/\/$/, "");
 
-  if (fromEnv) {
+  if (!trimmed) {
+    return "";
+  }
+
+  const withProtocol = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+  const url = new URL(withProtocol);
+  const isLocal =
+    url.hostname === "localhost" || url.hostname === "127.0.0.1";
+
+  if (!isLocal) {
+    url.protocol = "https:";
+  }
+
+  return url.origin;
+}
+
+export function getSiteUrl() {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL
+    ? normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL)
+    : "";
+  const isLocalEnv =
+    fromEnv.includes("localhost") || fromEnv.includes("127.0.0.1");
+  const onVercel = Boolean(process.env.VERCEL);
+
+  if (fromEnv && !(onVercel && isLocalEnv)) {
     return fromEnv;
+  }
+
+  const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim()
+    .replace(/^https?:\/\//, "")
+    .replace(/\/$/, "");
+
+  if (process.env.VERCEL_ENV === "production" && productionHost) {
+    return `https://${productionHost}`;
   }
 
   const vercelUrl = process.env.VERCEL_URL?.trim().replace(/\/$/, "");
@@ -28,7 +62,7 @@ export function getSiteUrl() {
     return `https://${vercelUrl}`;
   }
 
-  return "http://localhost:3000";
+  return fromEnv || "http://localhost:3000";
 }
 
 export function getSiteUrlObject() {
