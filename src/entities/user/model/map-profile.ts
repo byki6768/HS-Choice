@@ -3,9 +3,10 @@ import type { Database } from "@/shared/api/supabase/database.types";
 import type { User } from "./types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
+type ProfileClientRow = Omit<ProfileRow, "withdrawn_at">;
 
 export function mapProfileToUser(
-  profile: ProfileRow,
+  profile: ProfileClientRow,
   authUser: AuthUser,
 ): User {
   const metadata = authUser.user_metadata ?? {};

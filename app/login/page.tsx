@@ -1,4 +1,13 @@
+import type { Metadata } from "next";
 import { LoginPage } from "@/_pages/login";
+
+export const metadata: Metadata = {
+  title: "로그인",
+  description:
+    "Google, 이메일, 휴대폰 번호로 HS Choice에 로그인하거나 신규 가입하세요.",
+  robots: { index: false, follow: false },
+  alternates: { canonical: "/login" },
+};
 
 export default async function Page({
   searchParams,

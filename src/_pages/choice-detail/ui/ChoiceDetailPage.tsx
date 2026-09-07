@@ -1,6 +1,7 @@
 import { getChoiceById } from "@/entities/choice";
 import { getCommentsByGameId } from "@/entities/comment";
-import { PageContainer } from "@/shared/ui";
+import { absoluteUrl, routes, siteConfig } from "@/shared/config";
+import { JsonLd, PageContainer } from "@/shared/ui";
 import { ChoiceDetailLive } from "./ChoiceDetailLive";
 
 type ChoiceDetailPageProps = {
@@ -27,6 +28,41 @@ export async function ChoiceDetailPage({ choiceId }: ChoiceDetailPageProps) {
 
   return (
     <PageContainer className="flex flex-1 flex-col py-6 sm:py-8 lg:py-10">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Quiz",
+          name: choice.title,
+          description: `${choice.optionA} vs ${choice.optionB}`,
+          url: absoluteUrl(routes.choice(choice.id)),
+          inLanguage: "ko",
+          datePublished: choice.createdAt,
+          author: {
+            "@type": "Person",
+            name: choice.authorNickname,
+          },
+          publisher: {
+            "@type": "Organization",
+            name: siteConfig.name,
+          },
+          image: [choice.optionAImage, choice.optionBImage].filter(Boolean),
+          interactionStatistic: {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/LikeAction",
+            userInteractionCount: choice.participantCount,
+          },
+          hasPart: [
+            {
+              "@type": "Question",
+              name: choice.title,
+              suggestedAnswer: [
+                { "@type": "Answer", text: choice.optionA },
+                { "@type": "Answer", text: choice.optionB },
+              ],
+            },
+          ],
+        }}
+      />
       <ChoiceDetailLive choice={choice} comments={comments} />
     </PageContainer>
   );

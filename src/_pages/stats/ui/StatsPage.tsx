@@ -1,5 +1,6 @@
 import { getChoices } from "@/entities/choice";
-import { PageContainer } from "@/shared/ui";
+import { absoluteUrl, routes } from "@/shared/config";
+import { JsonLd, PageContainer } from "@/shared/ui";
 import { StatsLive } from "./StatsLive";
 
 type StatsPageProps = {
@@ -15,6 +16,17 @@ export async function StatsPage({
 
   return (
     <PageContainer className="flex flex-1 flex-col py-6 sm:py-8 lg:py-10">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "통계 보기",
+          description:
+            "밸런스 게임 투표 결과를 그래프로 확인하고 다른 게임 통계도 이어서 볼 수 있는 페이지입니다.",
+          url: absoluteUrl(routes.statsHome),
+          inLanguage: "ko",
+        }}
+      />
       {showVotedMessage ? (
         <p
           role="status"

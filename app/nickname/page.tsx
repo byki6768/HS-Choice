@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { NicknamePage } from "@/_pages/nickname";
 
 export const metadata: Metadata = {
-  title: "닉네임 설정 | HS Choice",
+  title: "닉네임 설정",
+  description: "HS Choice에서 사용할 닉네임을 설정합니다.",
+  robots: { index: false, follow: false },
 };
 
 export default async function Page({

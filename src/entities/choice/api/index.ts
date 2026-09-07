@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createBrowserClient } from "@/shared/api";
 import { toFriendlyError } from "@/shared/lib";
 import { mapGameToChoice, type GameQueryRow } from "../model/map-game";
@@ -28,7 +29,7 @@ function getImageExtension(file: File) {
   return fromType[file.type] ?? "jpg";
 }
 
-export async function getChoices(sort: FeedSort = "latest") {
+export const getChoices = cache(async (sort: FeedSort = "latest") => {
   const supabase = createBrowserClient();
   const { data, error } = await supabase
     .from("games")
@@ -46,9 +47,9 @@ export async function getChoices(sort: FeedSort = "latest") {
     ((data ?? []) as GameQueryRow[]).map(mapGameToChoice),
     sort,
   );
-}
+});
 
-export async function getChoiceById(id: string) {
+export const getChoiceById = cache(async (id: string) => {
   const supabase = createBrowserClient();
   const { data, error } = await supabase
     .from("games")
@@ -61,7 +62,7 @@ export async function getChoiceById(id: string) {
   }
 
   return mapGameToChoice(data as GameQueryRow);
-}
+});
 
 export async function uploadGameImage(input: {
   userId: string;
