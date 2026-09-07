@@ -3,6 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig, protectedRoutes, routes } from "@/shared/config";
 
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (/\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|html)$/i.test(pathname)) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -31,7 +37,6 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
   const isProtected = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
