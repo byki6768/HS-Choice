@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LogoutButton, NicknameForm, DeleteAccountButton, useAuth, isPhoneAuthEmail } from "@/features/auth";
 import { PageContainer } from "@/shared/ui";
 import { logoutPill } from "@/widgets/header";
+import { routes } from "@/shared/config";
 
 export function MyPage() {
   const { user } = useAuth();
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
+  const router = useRouter();
+
+  function handleNicknameSaved() {
+    router.replace(routes.home);
+    router.refresh();
+  }
 
   return (
     <PageContainer className="flex flex-1 flex-col py-6 sm:py-8 lg:py-10">
@@ -34,14 +40,11 @@ export function MyPage() {
             </p>
           </div>
         </div>
-        {savedMessage ? (
-          <p className="mb-4 text-sm text-foreground">{savedMessage}</p>
-        ) : null}
         <NicknameForm
           key={user?.nickname ?? "nickname"}
           initialNickname={user?.nickname ?? ""}
           submitLabel="닉네임 저장"
-          onSaved={() => setSavedMessage("닉네임을 저장했어요.")}
+          onSaved={handleNicknameSaved}
         />
         <div className="mt-6 flex flex-col gap-3">
           <LogoutButton className={logoutPill("w-full")} />

@@ -36,6 +36,8 @@ export const AUTH_MESSAGES = {
   wrongPassword: "틀린 비밀 번호입니다, 다시 확인하여 주세요",
   alreadyRegistered: "이미 가입된 회원입니다",
   passwordTooShort: "비밀번호는 6자 이상이어야 해요.",
+  emailInvalid: "이메일을 적어 주세요",
+  passwordMismatch: "비밀번호가 일치하지 않습니다",
 } as const;
 
 export function digitsOnlyPhone(phone: string) {

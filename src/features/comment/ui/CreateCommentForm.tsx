@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/ui";
 import { routes } from "@/shared/config";
@@ -20,10 +20,21 @@ export function CreateCommentForm({ gameId, onCreated }: CreateCommentFormProps)
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (window.location.hash !== "#comment-form") {
+      return;
+    }
+
+    if (isReady && isAuthenticated) {
+      contentRef.current?.focus({ preventScroll: true });
+    }
+  }, [isReady, isAuthenticated]);
 
   function goToLogin() {
     router.push(
-      `${routes.login}?next=${encodeURIComponent(routes.choice(gameId))}`,
+      `${routes.login}?next=${encodeURIComponent(routes.choiceComments(gameId))}`,
     );
   }
 
@@ -68,12 +79,17 @@ export function CreateCommentForm({ gameId, onCreated }: CreateCommentFormProps)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+    <form
+      id="comment-form"
+      onSubmit={handleSubmit}
+      className="flex scroll-mt-52 flex-col gap-3 sm:scroll-mt-72 lg:scroll-mt-80"
+    >
       <label htmlFor="comment-content" className="text-sm font-medium text-foreground">
-        댓글
+        댓글 쓰기
       </label>
       <textarea
         id="comment-content"
+        ref={contentRef}
         name="content"
         rows={3}
         value={content}

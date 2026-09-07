@@ -57,5 +57,6 @@ export function mapGameToChoice(row: GameQueryRow): Choice {
     authorNickname: nicknameFromProfile(row.profiles),
     participantCount: votes.participantCount,
     createdAt: row.created_at,
+    previewComments: [],
   };
 }

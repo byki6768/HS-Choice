@@ -16,6 +16,7 @@ export const mockChoices: Choice[] = [
     optionBVotes: 772,
     participantCount: 1284,
     createdAt: "2026-09-01T09:00:00.000Z",
+    previewComments: [],
   },
   {
     id: "summer-or-winter",
@@ -32,6 +33,7 @@ export const mockChoices: Choice[] = [
     optionBVotes: 1357,
     participantCount: 2461,
     createdAt: "2026-09-02T09:00:00.000Z",
+    previewComments: [],
   },
   {
     id: "cat-or-dog",
@@ -48,6 +50,7 @@ export const mockChoices: Choice[] = [
     optionBVotes: 1879,
     participantCount: 3890,
     createdAt: "2026-09-03T09:00:00.000Z",
+    previewComments: [],
   },
   {
     id: "morning-or-night",
@@ -64,6 +67,7 @@ export const mockChoices: Choice[] = [
     optionBVotes: 571,
     participantCount: 972,
     createdAt: "2026-09-04T09:00:00.000Z",
+    previewComments: [],
   },
   {
     id: "tteokbokki-or-burger",
@@ -80,6 +84,7 @@ export const mockChoices: Choice[] = [
     optionBVotes: 760,
     participantCount: 1650,
     createdAt: "2026-09-05T09:00:00.000Z",
+    previewComments: [],
   },
   {
     id: "plan-or-improvise",
@@ -96,5 +101,6 @@ export const mockChoices: Choice[] = [
     optionBVotes: 422,
     participantCount: 734,
     createdAt: "2026-09-06T09:00:00.000Z",
+    previewComments: [],
   },
 ];

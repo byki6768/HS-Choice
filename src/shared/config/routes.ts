@@ -8,6 +8,7 @@ export const routes = {
   statsHome: "/stats",
   authCallback: "/auth/callback",
   choice: (id: string) => `/choices/${id}`,
+  choiceComments: (id: string) => `/choices/${id}#comment-form`,
   stats: (gameId: string, options?: { voted?: boolean }) => {
     const params = new URLSearchParams();
     params.set("game", gameId);

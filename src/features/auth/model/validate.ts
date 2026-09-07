@@ -22,19 +22,15 @@ export function validatePasswordPair(password: string, passwordConfirm: string) 
   }
 
   if (password !== passwordConfirm) {
-    return "비밀번호 확인이 일치하지 않아요.";
+    return AUTH_MESSAGES.passwordMismatch;
   }
 
   return null;
 }
 
 export function validateEmail(email: string) {
-  if (!email.trim()) {
-    return "이메일을 입력해 주세요.";
-  }
-
-  if (!EMAIL_PATTERN.test(email.trim())) {
-    return "올바른 이메일 주소를 입력해 주세요.";
+  if (!email.trim() || !EMAIL_PATTERN.test(email.trim())) {
+    return AUTH_MESSAGES.emailInvalid;
   }
 
   return null;

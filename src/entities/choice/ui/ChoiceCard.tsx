@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatOptionWithVotes, formatParticipantCount } from "@/shared/lib";
 import { routes } from "@/shared/config";
 import type { Choice } from "../model/types";
+import { ChoiceCommentPreview } from "./ChoiceCommentPreview";
 import { ChoiceOptionMedia } from "./ChoiceOptionMedia";
 import { ChoiceResultBar } from "./ChoiceResultBar";
 
@@ -72,6 +73,10 @@ export function ChoiceCard({ choice }: ChoiceCardProps) {
           </Link>
         </div>
       </div>
+      <ChoiceCommentPreview
+        choiceId={choice.id}
+        comments={choice.previewComments}
+      />
     </article>
   );
 }

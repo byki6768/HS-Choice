@@ -13,6 +13,7 @@ import {
   signUpWithPhone,
 } from "../api";
 import { AUTH_MESSAGES } from "../model/types";
+import { validateEmail } from "../model/validate";
 import { AuthFeedback } from "./AuthFeedback";
 import { PasswordField } from "./PasswordField";
 import { PhoneFields } from "./PhoneFields";
@@ -31,12 +32,15 @@ function parseAuthStep(mode?: string | null): AuthStep {
 
 export function LoginForm({ mode }: LoginFormProps) {
   const router = useRouter();
+  const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const step = parseAuthStep(mode);
   const [method, setMethod] = useState<AuthMethod | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [passwordBubble, setPasswordBubble] = useState(false);
+  const [passwordMismatchBubble, setPasswordMismatchBubble] = useState(false);
+  const [emailBubble, setEmailBubble] = useState(false);
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
   const [welcome, setWelcome] = useState(false);
   const [email, setEmail] = useState("");
@@ -59,14 +63,68 @@ export function LoginForm({ mode }: LoginFormProps) {
     setPassword("");
     setPasswordConfirm("");
     setPasswordBubble(false);
+    setPasswordMismatchBubble(false);
+    setEmailBubble(false);
     setAlreadyRegistered(false);
     setCountryCode("+82");
     setMethod((current) => (current === nextMethod ? null : nextMethod));
   }
 
+  function changeEmail(value: string) {
+    setEmail(value);
+    setAlreadyRegistered(false);
+    setEmailBubble(value.trim().length > 0 && Boolean(validateEmail(value)));
+  }
+
   function changePassword(value: string) {
     setPassword(value);
-    setPasswordBubble(value.length > 0 && value.length < 6);
+    const tooShort = value.length > 0 && value.length < 6;
+    setPasswordBubble(tooShort);
+
+    if (tooShort) {
+      setPasswordMismatchBubble(false);
+      return;
+    }
+
+    if (passwordConfirm.length > 0) {
+      setPasswordMismatchBubble(value !== passwordConfirm);
+    }
+  }
+
+  function changePasswordConfirm(value: string) {
+    setPasswordConfirm(value);
+
+    if (password.length < 6) {
+      setPasswordMismatchBubble(false);
+      return;
+    }
+
+    setPasswordMismatchBubble(value.length > 0 && value !== password);
+  }
+
+  function passwordFieldBubble() {
+    if (passwordBubble) {
+      return AUTH_MESSAGES.passwordTooShort;
+    }
+
+    if (passwordMismatchBubble) {
+      return AUTH_MESSAGES.passwordMismatch;
+    }
+
+    return undefined;
+  }
+
+  function emailFieldBubble(inputId: string) {
+    if (!emailBubble) {
+      return undefined;
+    }
+
+    return (
+      <SpeechBubble
+        id={`${inputId}-hint`}
+        message={AUTH_MESSAGES.emailInvalid}
+      />
+    );
   }
 
   async function handleGoogle(intent: "login" | "signup") {
@@ -99,8 +157,28 @@ export function LoginForm({ mode }: LoginFormProps) {
     setError(null);
     setAlreadyRegistered(false);
 
+    if (method === "email" && validateEmail(email)) {
+      setEmailBubble(true);
+      window.requestAnimationFrame(() => {
+        emailRef.current?.focus();
+      });
+      return;
+    }
+
+    setEmailBubble(false);
+
     if (password.length < 6) {
       setPasswordBubble(true);
+      setPasswordMismatchBubble(false);
+      window.requestAnimationFrame(() => {
+        passwordRef.current?.focus();
+      });
+      return;
+    }
+
+    if (step === "signup" && password !== passwordConfirm) {
+      setPasswordBubble(false);
+      setPasswordMismatchBubble(true);
       window.requestAnimationFrame(() => {
         passwordRef.current?.focus();
       });
@@ -108,6 +186,7 @@ export function LoginForm({ mode }: LoginFormProps) {
     }
 
     setPasswordBubble(false);
+    setPasswordMismatchBubble(false);
     setIsSubmitting(true);
 
     try {
@@ -148,8 +227,26 @@ export function LoginForm({ mode }: LoginFormProps) {
       );
       setIsSubmitting(false);
 
+      if (message === AUTH_MESSAGES.emailInvalid) {
+        setEmailBubble(true);
+        window.requestAnimationFrame(() => {
+          emailRef.current?.focus();
+        });
+        return;
+      }
+
       if (message === AUTH_MESSAGES.passwordTooShort) {
         setPasswordBubble(true);
+        setPasswordMismatchBubble(false);
+        window.requestAnimationFrame(() => {
+          passwordRef.current?.focus();
+        });
+        return;
+      }
+
+      if (message === AUTH_MESSAGES.passwordMismatch) {
+        setPasswordBubble(false);
+        setPasswordMismatchBubble(true);
         window.requestAnimationFrame(() => {
           passwordRef.current?.focus();
         });
@@ -233,6 +330,7 @@ export function LoginForm({ mode }: LoginFormProps) {
             >
               <Input
                 id="login-email"
+                ref={emailRef}
                 label="이메일"
                 name="email"
                 type="email"
@@ -241,7 +339,8 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={email}
                 disabled={isSubmitting}
                 placeholder="name@example.com"
-                onChange={(event) => setEmail(event.target.value)}
+                bubble={emailFieldBubble("login-email")}
+                onChange={(event) => changeEmail(event.target.value)}
               />
               <PasswordField
                 id="login-email-password"
@@ -252,9 +351,7 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={password}
                 disabled={isSubmitting}
                 placeholder="**********"
-                bubble={
-                  passwordBubble ? AUTH_MESSAGES.passwordTooShort : undefined
-                }
+                bubble={passwordFieldBubble()}
                 onChange={(event) => changePassword(event.target.value)}
               />
               <Button type="submit" loading={isSubmitting}>
@@ -294,9 +391,7 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={password}
                 disabled={isSubmitting}
                 placeholder="**********"
-                bubble={
-                  passwordBubble ? AUTH_MESSAGES.passwordTooShort : undefined
-                }
+                bubble={passwordFieldBubble()}
                 onChange={(event) => changePassword(event.target.value)}
               />
               <Button type="submit" loading={isSubmitting}>
@@ -336,6 +431,7 @@ export function LoginForm({ mode }: LoginFormProps) {
             >
               <Input
                 id="signup-email"
+                ref={emailRef}
                 label="이메일"
                 name="email"
                 type="email"
@@ -344,10 +440,8 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={email}
                 disabled={isSubmitting}
                 placeholder="name@example.com"
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  setAlreadyRegistered(false);
-                }}
+                bubble={emailFieldBubble("signup-email")}
+                onChange={(event) => changeEmail(event.target.value)}
               />
               <p className="-mt-1 text-xs leading-5 text-muted">
                 인증 없이 로그인 아이디로만 저장합니다.
@@ -362,9 +456,7 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={password}
                 disabled={isSubmitting}
                 placeholder="**********"
-                bubble={
-                  passwordBubble ? AUTH_MESSAGES.passwordTooShort : undefined
-                }
+                bubble={passwordFieldBubble()}
                 onChange={(event) => changePassword(event.target.value)}
               />
               <PasswordField
@@ -376,7 +468,7 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={passwordConfirm}
                 disabled={isSubmitting}
                 placeholder="**********"
-                onChange={(event) => setPasswordConfirm(event.target.value)}
+                onChange={(event) => changePasswordConfirm(event.target.value)}
               />
               {alreadyRegistered ? (
                 <SpeechBubble message={AUTH_MESSAGES.alreadyRegistered} />
@@ -428,9 +520,7 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={password}
                 disabled={isSubmitting}
                 placeholder="**********"
-                bubble={
-                  passwordBubble ? AUTH_MESSAGES.passwordTooShort : undefined
-                }
+                bubble={passwordFieldBubble()}
                 onChange={(event) => changePassword(event.target.value)}
               />
               <PasswordField
@@ -442,7 +532,7 @@ export function LoginForm({ mode }: LoginFormProps) {
                 value={passwordConfirm}
                 disabled={isSubmitting}
                 placeholder="**********"
-                onChange={(event) => setPasswordConfirm(event.target.value)}
+                onChange={(event) => changePasswordConfirm(event.target.value)}
               />
               {alreadyRegistered ? (
                 <SpeechBubble message={AUTH_MESSAGES.alreadyRegistered} />

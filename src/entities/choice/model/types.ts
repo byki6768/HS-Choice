@@ -1,3 +1,5 @@
+import type { Comment } from "@/entities/comment/model/types";
+
 export type FeedSort = "latest" | "popular";
 
 export type Choice = {
@@ -13,4 +15,5 @@ export type Choice = {
   authorNickname: string;
   participantCount: number;
   createdAt: string;
+  previewComments: Comment[];
 };

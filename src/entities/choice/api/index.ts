@@ -1,3 +1,4 @@
+import { getPreviewCommentsByGameIds } from "@/entities/comment/api";
 import { cache } from "react";
 import { createBrowserClient } from "@/shared/api";
 import { toFriendlyError } from "@/shared/lib";
@@ -43,10 +44,18 @@ export const getChoices = cache(async (sort: FeedSort = "latest") => {
     );
   }
 
-  return sortChoices(
+  const choices = sortChoices(
     ((data ?? []) as GameQueryRow[]).map(mapGameToChoice),
     sort,
   );
+  const commentsByGame = await getPreviewCommentsByGameIds(
+    choices.map((choice) => choice.id),
+  );
+
+  return choices.map((choice) => ({
+    ...choice,
+    previewComments: commentsByGame.get(choice.id) ?? [],
+  }));
 });
 
 export const getChoiceById = cache(async (id: string) => {
