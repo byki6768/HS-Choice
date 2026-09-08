@@ -43,3 +43,24 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+@keyframes logo-spectrum-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.logo-spectrum-shift {
+  background-size: 180% 180%;
+  animation: logo-spectrum-shift 22s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-spectrum-shift {
+    animation: none;
+  }
+}

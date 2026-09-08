@@ -4,16 +4,17 @@ import { routes } from "@/shared/config";
 import { AuthNav, MyPageLink } from "./AuthNav";
 import { BrandLogo } from "./BrandLogo";
 import { CreateGameLink } from "./CreateGameLink";
+import { LogoSpectrumFrame } from "./LogoSpectrumFrame";
 import { navPill } from "./nav-pill";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-40 overflow-x-clip border-b border-border/80 bg-background/90 pt-[env(safe-area-inset-top)] backdrop-blur-md">
-      <div className="bg-black">
+      <LogoSpectrumFrame>
         <PageContainer className="flex justify-center py-1 sm:py-1.5">
           <BrandLogo />
         </PageContainer>
-      </div>
+      </LogoSpectrumFrame>
       <PageContainer className="flex flex-col items-center gap-2 py-2 sm:gap-3 sm:py-3 lg:gap-4 lg:py-4">
         <nav
           aria-label="주요 메뉴"
