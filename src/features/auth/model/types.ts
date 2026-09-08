@@ -38,6 +38,11 @@ export const AUTH_MESSAGES = {
   passwordTooShort: "비밀번호는 6자 이상이어야 해요.",
   emailInvalid: "이메일을 적어 주세요",
   passwordMismatch: "비밀번호가 일치하지 않습니다",
+  phoneRequired: "휴대폰 번호를 입력해 주세요.",
+  phoneInvalid: "휴대폰 번호 10자리를 입력해 주세요.",
+  googleLoginFailed: "Google 로그인에 실패했어요. 다시 시도해 주세요.",
+  googleSignupFailed: "Google 가입에 실패했어요. 다시 시도해 주세요.",
+  authFailed: "로그인에 실패했어요. 다시 시도해 주세요.",
 } as const;
 
 export function digitsOnlyPhone(phone: string) {

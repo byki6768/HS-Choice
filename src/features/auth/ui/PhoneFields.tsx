@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 
 type PhoneFieldsProps = {
   id: string;
   countryCode: string;
   phone: string;
   disabled?: boolean;
+  bubble?: ReactNode;
+  inputRef?: Ref<HTMLInputElement>;
   onCountryCodeChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
 };
@@ -215,6 +217,8 @@ export function PhoneFields({
   countryCode,
   phone,
   disabled = false,
+  bubble,
+  inputRef,
   onCountryCodeChange,
   onPhoneChange,
 }: PhoneFieldsProps) {
@@ -227,6 +231,7 @@ export function PhoneFields({
         휴대폰 번호
         <span className="ml-0.5 text-accent">*</span>
       </p>
+      {bubble}
       <div className="flex gap-2">
         <CountryCodeField
           id={codeId}
@@ -236,6 +241,7 @@ export function PhoneFields({
         />
         <input
           id={numberId}
+          ref={inputRef}
           name="phone"
           type="tel"
           inputMode="numeric"
@@ -245,6 +251,7 @@ export function PhoneFields({
           value={phone}
           placeholder="10-1234-5678"
           aria-label="휴대폰 번호"
+          aria-describedby={bubble ? `${id}-hint` : undefined}
           className={`${fieldClassName} min-w-0 flex-1 px-4`}
           onChange={(event) => onPhoneChange(event.target.value)}
         />

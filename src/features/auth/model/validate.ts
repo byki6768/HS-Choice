@@ -40,11 +40,11 @@ export function validatePhone(phone: string) {
   const digits = digitsOnlyPhone(phone);
 
   if (!digits) {
-    return "휴대폰 번호를 입력해 주세요.";
+    return AUTH_MESSAGES.phoneRequired;
   }
 
   if (digits.length !== 10) {
-    return "휴대폰 번호 10자리를 입력해 주세요.";
+    return AUTH_MESSAGES.phoneInvalid;
   }
 
   return null;

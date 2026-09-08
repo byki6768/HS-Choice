@@ -1,4 +1,4 @@
-import { AUTH_MESSAGES, LoginForm } from "@/features/auth";
+import { LoginForm } from "@/features/auth";
 import { PageContainer } from "@/shared/ui";
 
 type LoginPageProps = {
@@ -7,12 +7,12 @@ type LoginPageProps = {
 };
 
 export function LoginPage({ error, mode }: LoginPageProps) {
-  const errorMessage =
-    error === "not_member"
-      ? AUTH_MESSAGES.notFound
-      : error === "auth"
-        ? "로그인에 실패했어요. 다시 시도해 주세요."
-        : null;
+  const resolvedMode =
+    mode === "login" || mode === "signup"
+      ? mode
+      : error
+        ? "login"
+        : undefined;
 
   return (
     <PageContainer className="flex flex-1 flex-col py-6 sm:py-8 lg:py-10">
@@ -26,17 +26,10 @@ export function LoginPage({ error, mode }: LoginPageProps) {
         </p>
       </header>
       <div className="mx-auto w-full max-w-md rounded-3xl border border-border bg-surface p-4 shadow-sm sm:p-6">
-        {errorMessage ? (
-          <p
-            role="alert"
-            className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300"
-          >
-            {errorMessage}
-          </p>
-        ) : null}
         <LoginForm
-          key={mode === "login" || mode === "signup" ? mode : "menu"}
-          mode={mode}
+          key={resolvedMode === "login" || resolvedMode === "signup" ? resolvedMode : "menu"}
+          mode={resolvedMode}
+          initialError={error}
         />
       </div>
     </PageContainer>
